@@ -24,8 +24,10 @@ observe({
   # in the input data tab.
   # 
   # Check if example selected, or if not then ask to upload a file.
+  query <- parseQueryString(session$clientData$url_search)
+  
   validate(
-    need((input$data_file_type=="examplecounts")|((!is.null(input$rdatafile))|(!is.null(input$datafile))), 
+    need((input$data_file_type=="examplecounts")|((!is.null(input$rdatafile))|(!is.null(input$datafile)))|(!is.null(query[['countsdata']])), 
          message = "Please select a file")
   )
   inFile <- input$datafile
@@ -50,6 +52,17 @@ observe({
   
 })
 
+decryptUrlParam = function (cipher)
+{
+  keyHex <- readr::read_file("private.txt")
+  
+  key = hex2bin(keyHex)
+  cipher = hex2bin(cipher)
+  
+  orig <- simple_decrypt(cipher, key)
+  
+  unserialize(orig)
+}
 
 inputDataReactive <- reactive({
   
@@ -60,13 +73,43 @@ inputDataReactive <- reactive({
   # be found.
   print("inputting data")
   # Check if example selected, or if not then ask to upload a file.
+  query <- parseQueryString(session$clientData$url_search)
   validate(
-    need((input$data_file_type=="examplecounts")|((!is.null(input$rdatafile))|(!is.null(input$datafile))), 
+    need((input$data_file_type=="examplecounts")|((!is.null(input$rdatafile))|(!is.null(input$datafile)))|(!is.null(query[['countsdata']])), 
          message = "Please select a file")
   )
   inFile <- input$datafile
   inRFile <- input$rdatafile
- # browser()
+  
+  
+  query <- parseQueryString(session$clientData$url_search)
+  if (!is.null(query[['countsdata']])) {
+    
+    inFile = decryptUrlParam(query[['countsdata']])
+    #seqdata <- read.csv(inFile, header=TRUE, sep=",")
+    seqdata <- read_csv(inFile)
+    print('uploaded seqdata')
+    
+    if(ncol(seqdata)==1) { # if file appears not to work as csv try tsv
+      seqdata <- read.tsv(inFile, header=TRUE, row.names = 1)
+      print('changed to tsv, uploaded seqdata')
+    }
+    shiny::validate(need(ncol(seqdata)>1,
+                         message="File appears to be one column. Check that it is a comma-separated (.csv) file."))
+    
+    updateTabsetPanel(session, "navbarpageid", selected = "inputdatatab")
+    
+    updateRadioButtons(session, "data_file_type", selected = "upload")
+    
+    shinyjs::show(selector = "a[data-value=\"datainput\"]")
+    shinyjs::disable("data_file_type")
+    shinyjs::disable("datafile")
+    shinyjs::disable("inputdat_type")
+    #js$collapse("uploadbox")
+    
+    return(list('data'=seqdata))
+  }
+  
   
   if(input$data_file_type=="examplecounts") {
     # upload example data
@@ -156,12 +199,12 @@ analyzeDataReactive <-
                     ## ==================================================================================== ##
                     ## Count/expression data
                     ## ==================================================================================== ##
-                    
                     if(input$inputdat_type=="expression_only") {
                       numgeneids <- 0
                       
                       #catch incorrect gene id error, only works if geneids are 1:numgeneids and no other columns are characters
                       numgeneids = max(numgeneids,max(which(sapply(alldata,class)=="character")))
+                      
                       validate(need(numgeneids>0,
                                     message = "You have no columns with characters, check that you have at least one column of gene ids in your file.")
                       )

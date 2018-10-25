@@ -44,7 +44,8 @@ library(heatmaply)
 library(readr)
 library(colourpicker)
 library(data.table)
-
+library(sodium)
+library(shinyjs)
 ##================================================================================##
 
 source("fun-dotplot.R")

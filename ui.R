@@ -39,30 +39,35 @@ customHeaderPanel <- function(title,windowTitle=title){
 tagList(
   tags$head(
     tags$style(HTML(" .shiny-output-error-validation {color: darkred; } ")),
-    tags$style(".mybuttonclass{background-color:#CD0000;} .mybuttonclass{color: #fff;} .mybuttonclass{border-color: #9E0000;}")
+    tags$style(".mybuttonclass{background-color:#CD0000;} .mybuttonclass{color: #fff;} .mybuttonclass{border-color: #9E0000;}"),
+    shinyjs::useShinyjs()
   ),
   navbarPage(
     
     theme = "bootstrap.min.united.updated.css",
+    id = "navbarpageid",
     #United theme from http://bootswatch.com/
     #customHeaderPanel(title="START: RNAseq Analysis and Visualization Resource"),#img(src="KCardio_CMYK_4C_pos_small.jpg",height=50,width= 92,align="right")	,
     title = "START: Shiny Transcriptome Analysis Resource Tool",
-    source("ui-tab-landing.R",local=TRUE)$value,
-    ## =========================================================================== ##
-    ## DOWNLOAD DATA TABS
-    ## =========================================================================== ##
-    source("ui-tab-inputdata.R",local=TRUE)$value,
-    source("ui-tab-filterdata.R",local=TRUE)$value,
-    ## =========================================================================== ##
-    ## Visualization TABS
-    ## =========================================================================== ##
-    source("ui-tab-samplegroupplots.R",local=TRUE)$value,
-    source("ui-tab-analysisres.R",local=TRUE)$value,
-    source("ui-tab-dotplot.R",local=TRUE)$value,
-    source("ui-tab-heatmap.R",local=TRUE)$value,
-    source("ui-tab-help.R",local=TRUE)$value,
-    source("ui-tab-news.R",local=TRUE)$value,
-    source("ui-tab-terms.R",local=TRUE)$value,
+    #tabsetPanel(id = "tabs",
+                source("ui-tab-landing.R",local=TRUE)$value,
+                ## =========================================================================== ##
+                ## DOWNLOAD DATA TABS
+                ## =========================================================================== ##
+                source("ui-tab-inputdata.R",local=TRUE)$value,
+                source("ui-tab-filterdata.R",local=TRUE)$value,
+                ## =========================================================================== ##
+                ## Visualization TABS
+                ## =========================================================================== ##
+                source("ui-tab-samplegroupplots.R",local=TRUE)$value,
+                source("ui-tab-analysisres.R",local=TRUE)$value,
+                source("ui-tab-dotplot.R",local=TRUE)$value,
+                source("ui-tab-heatmap.R",local=TRUE)$value,
+                source("ui-tab-help.R",local=TRUE)$value,
+                source("ui-tab-news.R",local=TRUE)$value,
+                source("ui-tab-terms.R",local=TRUE)$value
+                #)
+    ,
     #end definitions of tabs, now footer
     ## ============================================================================ ##
     ## INFO TAB

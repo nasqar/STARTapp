@@ -23,7 +23,7 @@
 ## This tab is used to input the count or normalized data files
 ## ==================================================================================== ##
 
-tabPanel("Input Data", 
+tabPanel("Input Data", value = "inputdatatab", 
          ## ==================================================================================== ##
          ## Left hand column has the input data settings and options
          ## ==================================================================================== ##

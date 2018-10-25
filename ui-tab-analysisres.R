@@ -50,9 +50,9 @@ tabPanel("Analysis Plots",
                                          selected = "-log10(p-value)"),
                             radioButtons("scatterresultsname",label="Select Test for Color Factor",
                                          choices=""),
-                            colourInput("scattercolor_low",label="Select Color - Low Values","blue",
+                            colourpicker::colourInput("scattercolor_low",label="Select Color - Low Values","blue",
                                         showColour = "background"),
-                            colourInput("scattercolor_hi",label="Select Color - High Values","orange",
+                            colourpicker::colourInput("scattercolor_hi",label="Select Color - High Values","orange",
                                         showColour = "background")
                             
            ),#conditionalpanel
